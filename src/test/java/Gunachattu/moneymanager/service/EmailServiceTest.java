@@ -22,8 +22,6 @@ class EmailServiceTest {
     @InjectMocks
     private EmailService emailService;
 
-
-    //hello
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
         // Use reflection to set the private field 'fromEmail'
