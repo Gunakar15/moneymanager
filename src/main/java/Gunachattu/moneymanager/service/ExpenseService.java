@@ -10,6 +10,10 @@ import Gunachattu.moneymanager.repository.IncomeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ExpenseService {
@@ -29,7 +33,28 @@ public class ExpenseService {
 
     }
 
+// Retrieve total expenses for the current month/based on the start date and end date
+    public List<ExpenseDTO> getCurrentMonthExpensesForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = now.withDayOfMonth(1);
+        LocalDate endDate = now.withDayOfMonth(now.lengthOfMonth());
+        List<ExpenseEntity> list = expenseRepository.findByProfileIdAndDateBetween(profile.getId(), startDate, endDate);
+        return list.stream().map(this::toDTO).toList();
 
+    }
+// delete expense by id for current user
+    public void deleteExpense(Long expenseId) {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        ExpenseEntity entity = expenseRepository.findById(expenseId).orElseThrow(() -> new RuntimeException("Expense not found"));
+        if(!entity.getProfile().getId().equals(profile.getId())) {
+
+            throw new RuntimeException("Unauthorized to delete this expense");
+        }
+        expenseRepository.delete(entity);
+
+
+    }
     //    helper Methods
     private ExpenseEntity toEntity(ExpenseDTO dto, ProfileEntity profile, CategoryEntity category) {
         return ExpenseEntity.builder()

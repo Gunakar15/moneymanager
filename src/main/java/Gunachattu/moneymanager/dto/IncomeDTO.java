@@ -21,7 +21,7 @@ public class IncomeDTO {
     private String categoryName;
     private Long categoryId;
     private BigDecimal amount;
-    private LocalDate date;
+    private LocalDate date=LocalDate.now() ;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
